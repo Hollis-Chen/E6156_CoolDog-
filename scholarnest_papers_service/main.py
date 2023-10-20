@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 import json
+import uvicorn
 
 app = FastAPI()
 
@@ -34,5 +35,4 @@ def search_papers_by_keyword(keyword: str):
     return matching_papers
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8012)
