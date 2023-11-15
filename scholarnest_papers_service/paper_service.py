@@ -3,9 +3,20 @@ from pydantic import BaseModel
 import mysql.connector
 from mysql.connector import Error
 import uvicorn
+import boto3
+from botocore.exceptions import ClientError
 
 app = FastAPI()
 
+# Function to publish a message to SNS topic
+def publish_to_sns(message, topic_arn):
+    try:
+        sns_client = boto3.client('sns', region_name='us-east-2')
+        sns_client.publish(TopicArn=topic_arn, Message=message)
+    except ClientError as e:
+        print(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail="Error in sending SNS message")
+    
 # Database Connection
 def create_db_connection():
     try:
@@ -116,15 +127,21 @@ def add_paper(paper: Paper):
                 paper.s2_url
             ))
             connection.commit()
+
+            message = f"New paper added: {paper.title}"
+            sns_topic_arn = 'arn:aws:sns:us-east-2:904170514580:paper_email'
+            publish_to_sns(message, sns_topic_arn)
+            
             return {"message": "Paper added successfully"}
         except Error as e:
-            connection.rollback() # Rollback the transaction in case of error
+            connection.rollback()  
             raise HTTPException(status_code=400, detail=str(e))
         finally:
             cursor.close()
             connection.close()
     else:
         raise HTTPException(status_code=500, detail="Could not connect to the database")
+
 
 @app.delete("/papers/delete/{paper_id}")
 def delete_paper(paper_id: str):
