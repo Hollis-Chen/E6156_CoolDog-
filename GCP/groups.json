@@ -1,0 +1,502 @@
+[
+  {
+    "id": 1,
+    "group_name": "Future-focused Alchemists",
+    "group_size": 13
+  },
+  {
+    "id": 2,
+    "group_name": "Design-centric Artists",
+    "group_size": 5
+  },
+  {
+    "id": 3,
+    "group_name": "Imaginative Catalysts",
+    "group_size": 9
+  },
+  {
+    "id": 4,
+    "group_name": "Data-driven Artists",
+    "group_size": 22
+  },
+  {
+    "id": 5,
+    "group_name": "Data-driven Explorers",
+    "group_size": 10
+  },
+  {
+    "id": 6,
+    "group_name": "Creative Artists",
+    "group_size": 20
+  },
+  {
+    "id": 7,
+    "group_name": "Code-savvy Dreamers",
+    "group_size": 18
+  },
+  {
+    "id": 8,
+    "group_name": "Imaginative Pioneers",
+    "group_size": 20
+  },
+  {
+    "id": 9,
+    "group_name": "Creative Explorers",
+    "group_size": 17
+  },
+  {
+    "id": 10,
+    "group_name": "Tech-savvy Alchemists",
+    "group_size": 10
+  },
+  {
+    "id": 11,
+    "group_name": "Tech-savvy Visionaries",
+    "group_size": 9
+  },
+  {
+    "id": 12,
+    "group_name": "Design-centric Visionaries",
+    "group_size": 7
+  },
+  {
+    "id": 13,
+    "group_name": "Code-savvy Pioneers",
+    "group_size": 20
+  },
+  {
+    "id": 14,
+    "group_name": "Creative Catalysts",
+    "group_size": 7
+  },
+  {
+    "id": 15,
+    "group_name": "Tech-savvy Catalysts",
+    "group_size": 15
+  },
+  {
+    "id": 16,
+    "group_name": "Robotic Pioneers",
+    "group_size": 21
+  },
+  {
+    "id": 17,
+    "group_name": "Imaginative Mavericks",
+    "group_size": 23
+  },
+  {
+    "id": 18,
+    "group_name": "Data-driven Dreamers",
+    "group_size": 25
+  },
+  {
+    "id": 19,
+    "group_name": "Analytical Visionaries",
+    "group_size": 23
+  },
+  {
+    "id": 20,
+    "group_name": "Tech-savvy Catalysts",
+    "group_size": 19
+  },
+  {
+    "id": 21,
+    "group_name": "Data-driven Artists",
+    "group_size": 17
+  },
+  {
+    "id": 22,
+    "group_name": "Analytical Explorers",
+    "group_size": 19
+  },
+  {
+    "id": 23,
+    "group_name": "Future-focused Dreamers",
+    "group_size": 15
+  },
+  {
+    "id": 24,
+    "group_name": "Innovative Dreamers",
+    "group_size": 22
+  },
+  {
+    "id": 25,
+    "group_name": "Design-centric Alchemists",
+    "group_size": 24
+  },
+  {
+    "id": 26,
+    "group_name": "Creative Alchemists",
+    "group_size": 23
+  },
+  {
+    "id": 27,
+    "group_name": "Data-driven Alchemists",
+    "group_size": 10
+  },
+  {
+    "id": 28,
+    "group_name": "Tech-savvy Catalysts",
+    "group_size": 17
+  },
+  {
+    "id": 29,
+    "group_name": "Future-focused Dreamers",
+    "group_size": 13
+  },
+  {
+    "id": 30,
+    "group_name": "Imaginative Innovators",
+    "group_size": 16
+  },
+  {
+    "id": 31,
+    "group_name": "Tech-savvy Dreamweavers",
+    "group_size": 16
+  },
+  {
+    "id": 32,
+    "group_name": "Code-savvy Explorers",
+    "group_size": 23
+  },
+  {
+    "id": 33,
+    "group_name": "Future-focused Artists",
+    "group_size": 20
+  },
+  {
+    "id": 34,
+    "group_name": "Analytical Dreamers",
+    "group_size": 14
+  },
+  {
+    "id": 35,
+    "group_name": "Creative Innovators",
+    "group_size": 20
+  },
+  {
+    "id": 36,
+    "group_name": "Data-driven Explorers",
+    "group_size": 14
+  },
+  {
+    "id": 37,
+    "group_name": "Design-centric Dreamweavers",
+    "group_size": 13
+  },
+  {
+    "id": 38,
+    "group_name": "Analytical Artists",
+    "group_size": 10
+  },
+  {
+    "id": 39,
+    "group_name": "Tech-savvy Catalysts",
+    "group_size": 7
+  },
+  {
+    "id": 40,
+    "group_name": "Creative Mavericks",
+    "group_size": 10
+  },
+  {
+    "id": 41,
+    "group_name": "Analytical Explorers",
+    "group_size": 17
+  },
+  {
+    "id": 42,
+    "group_name": "Imaginative Dreamweavers",
+    "group_size": 11
+  },
+  {
+    "id": 43,
+    "group_name": "Code-savvy Mavericks",
+    "group_size": 23
+  },
+  {
+    "id": 44,
+    "group_name": "Tech-savvy Catalysts",
+    "group_size": 12
+  },
+  {
+    "id": 45,
+    "group_name": "Design-centric Dreamers",
+    "group_size": 21
+  },
+  {
+    "id": 46,
+    "group_name": "Innovative Dreamweavers",
+    "group_size": 17
+  },
+  {
+    "id": 47,
+    "group_name": "Code-savvy Innovators",
+    "group_size": 12
+  },
+  {
+    "id": 48,
+    "group_name": "Creative Alchemists",
+    "group_size": 23
+  },
+  {
+    "id": 49,
+    "group_name": "Code-savvy Mavericks",
+    "group_size": 14
+  },
+  {
+    "id": 50,
+    "group_name": "Future-focused Dreamers",
+    "group_size": 8
+  },
+  {
+    "id": 51,
+    "group_name": "Data-driven Innovators",
+    "group_size": 13
+  },
+  {
+    "id": 52,
+    "group_name": "Analytical Dreamweavers",
+    "group_size": 9
+  },
+  {
+    "id": 53,
+    "group_name": "Creative Pioneers",
+    "group_size": 19
+  },
+  {
+    "id": 54,
+    "group_name": "Imaginative Alchemists",
+    "group_size": 15
+  },
+  {
+    "id": 55,
+    "group_name": "Future-focused Explorers",
+    "group_size": 6
+  },
+  {
+    "id": 56,
+    "group_name": "Robotic Dreamweavers",
+    "group_size": 23
+  },
+  {
+    "id": 57,
+    "group_name": "Code-savvy Visionaries",
+    "group_size": 10
+  },
+  {
+    "id": 58,
+    "group_name": "Code-savvy Alchemists",
+    "group_size": 6
+  },
+  {
+    "id": 59,
+    "group_name": "Tech-savvy Innovators",
+    "group_size": 18
+  },
+  {
+    "id": 60,
+    "group_name": "Creative Innovators",
+    "group_size": 23
+  },
+  {
+    "id": 61,
+    "group_name": "Robotic Dreamweavers",
+    "group_size": 8
+  },
+  {
+    "id": 62,
+    "group_name": "Analytical Visionaries",
+    "group_size": 7
+  },
+  {
+    "id": 63,
+    "group_name": "Imaginative Artists",
+    "group_size": 23
+  },
+  {
+    "id": 64,
+    "group_name": "Data-driven Pioneers",
+    "group_size": 11
+  },
+  {
+    "id": 65,
+    "group_name": "Robotic Innovators",
+    "group_size": 18
+  },
+  {
+    "id": 66,
+    "group_name": "Data-driven Visionaries",
+    "group_size": 6
+  },
+  {
+    "id": 67,
+    "group_name": "Data-driven Explorers",
+    "group_size": 5
+  },
+  {
+    "id": 68,
+    "group_name": "Design-centric Dreamers",
+    "group_size": 24
+  },
+  {
+    "id": 69,
+    "group_name": "Tech-savvy Artists",
+    "group_size": 7
+  },
+  {
+    "id": 70,
+    "group_name": "Code-savvy Innovators",
+    "group_size": 5
+  },
+  {
+    "id": 71,
+    "group_name": "Imaginative Catalysts",
+    "group_size": 20
+  },
+  {
+    "id": 72,
+    "group_name": "Design-centric Pioneers",
+    "group_size": 21
+  },
+  {
+    "id": 73,
+    "group_name": "Innovative Explorers",
+    "group_size": 23
+  },
+  {
+    "id": 74,
+    "group_name": "Innovative Pioneers",
+    "group_size": 12
+  },
+  {
+    "id": 75,
+    "group_name": "Tech-savvy Dreamers",
+    "group_size": 23
+  },
+  {
+    "id": 76,
+    "group_name": "Innovative Artists",
+    "group_size": 15
+  },
+  {
+    "id": 77,
+    "group_name": "Design-centric Dreamweavers",
+    "group_size": 14
+  },
+  {
+    "id": 78,
+    "group_name": "Data-driven Artists",
+    "group_size": 12
+  },
+  {
+    "id": 79,
+    "group_name": "Analytical Artists",
+    "group_size": 19
+  },
+  {
+    "id": 80,
+    "group_name": "Tech-savvy Dreamers",
+    "group_size": 10
+  },
+  {
+    "id": 81,
+    "group_name": "Code-savvy Dreamweavers",
+    "group_size": 21
+  },
+  {
+    "id": 82,
+    "group_name": "Robotic Explorers",
+    "group_size": 19
+  },
+  {
+    "id": 83,
+    "group_name": "Design-centric Artists",
+    "group_size": 10
+  },
+  {
+    "id": 84,
+    "group_name": "Creative Artists",
+    "group_size": 19
+  },
+  {
+    "id": 85,
+    "group_name": "Robotic Explorers",
+    "group_size": 11
+  },
+  {
+    "id": 86,
+    "group_name": "Code-savvy Mavericks",
+    "group_size": 17
+  },
+  {
+    "id": 87,
+    "group_name": "Tech-savvy Artists",
+    "group_size": 11
+  },
+  {
+    "id": 88,
+    "group_name": "Code-savvy Innovators",
+    "group_size": 22
+  },
+  {
+    "id": 89,
+    "group_name": "Future-focused Innovators",
+    "group_size": 24
+  },
+  {
+    "id": 90,
+    "group_name": "Creative Catalysts",
+    "group_size": 16
+  },
+  {
+    "id": 91,
+    "group_name": "Creative Dreamweavers",
+    "group_size": 19
+  },
+  {
+    "id": 92,
+    "group_name": "Analytical Innovators",
+    "group_size": 25
+  },
+  {
+    "id": 93,
+    "group_name": "Data-driven Catalysts",
+    "group_size": 5
+  },
+  {
+    "id": 94,
+    "group_name": "Tech-savvy Mavericks",
+    "group_size": 17
+  },
+  {
+    "id": 95,
+    "group_name": "Data-driven Visionaries",
+    "group_size": 5
+  },
+  {
+    "id": 96,
+    "group_name": "Future-focused Explorers",
+    "group_size": 16
+  },
+  {
+    "id": 97,
+    "group_name": "Tech-savvy Alchemists",
+    "group_size": 6
+  },
+  {
+    "id": 98,
+    "group_name": "Imaginative Pioneers",
+    "group_size": 7
+  },
+  {
+    "id": 99,
+    "group_name": "Analytical Alchemists",
+    "group_size": 15
+  },
+  {
+    "id": 100,
+    "group_name": "Robotic Visionaries",
+    "group_size": 10
+  }
+]
