@@ -1,4 +1,9 @@
+fastapi
+uvicorn
+pydantic
+mysql-connector-python
+boto3
+botocore
+graphene
+starlette-graphene3
 
-fastapi==0.104.0
-uvicorn==0.23.2
-pydantic==2.4.2
