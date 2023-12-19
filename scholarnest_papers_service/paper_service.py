@@ -6,6 +6,9 @@ import uvicorn
 import boto3
 from botocore.exceptions import ClientError
 
+import graphene
+from starlette_graphene3 import GraphQLApp, make_graphiql_handler
+
 app = FastAPI()
 
 # Function to publish a message to SNS topic
@@ -169,6 +172,53 @@ def delete_paper(paper_id: str):
     else:
         raise HTTPException(status_code=500, detail="Could not connect to the database")
 
+##########################################
+###graphQL GET example###
+##########################################
+class Paper(graphene.ObjectType):
+    paper_id = graphene.String()
+    title = graphene.String()
+    authors = graphene.String()
+    abstract = graphene.String()
+    year = graphene.Int()
+    arxiv_id = graphene.String()
+    acl_id = graphene.String()
+    pmc_id = graphene.String()
+    pubmed_id = graphene.String()
+    doi = graphene.String()
+    venue = graphene.String()
+    journal = graphene.String()
+    mag_id = graphene.String()
+    outbound_citations = graphene.String()
+    inbound_citations = graphene.String()
+    has_outbound_citations = graphene.Boolean()
+    has_inbound_citations = graphene.Boolean()
+    has_pdf_parse = graphene.Boolean()
+    s2_url = graphene.String()
+    
+class Query(graphene.ObjectType):
+    get_paper_by_id = graphene.Field(Paper, paper_id=graphene.String(required=True))
+
+    def resolve_get_paper_by_id(self, info, paper_id):
+        connection = create_db_connection()
+        if connection:
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM research_papers WHERE paper_id = %s", (paper_id,))
+            paper_data = cursor.fetchone()
+            cursor.close()
+            connection.close()
+            if paper_data:
+                return Paper(**paper_data)
+            return None
+
+schema = graphene.Schema(query=Query)
+app.mount(
+    "/graphql",
+    GraphQLApp(
+        schema=schema,
+        on_get=make_graphiql_handler()  # For GraphiQL GUI
+    )
+)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8012)
