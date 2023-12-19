@@ -9,7 +9,22 @@ from botocore.exceptions import ClientError
 import graphene
 from starlette_graphene3 import GraphQLApp, make_graphiql_handler
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
+
+# Set up CORS middleware
+origins = [
+    "http://3.210.123.50:5000/"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Allows specific origins (domains)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Function to publish a message to SNS topic
 def publish_to_sns(message, topic_arn):
