@@ -81,7 +81,7 @@ async def auth_callback(request: Request, user: GoogleSSO = Depends(google_sso.v
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(user: dict = Depends(get_user)):
-    # Render dashboard with user profile picture
+    # Render dashboard with user profile picture and sign-out link
     html_content = f"""
         <!DOCTYPE html>
         <html lang="en">
@@ -98,7 +98,9 @@ async def dashboard(user: dict = Depends(get_user)):
                 header {{
                     background-color: #f1f1f1;
                     padding: 10px;
-                    text-align: right;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
                 }}
                 main {{
                     padding: 20px;
@@ -112,9 +114,14 @@ async def dashboard(user: dict = Depends(get_user)):
         </head>
         <body>
             <header>
-                <a href="/user/profile">
-                    <img src="{user['picture']}" alt="Profile Picture" class="profile-picture">
-                </a>
+                <div>
+                    <a href="/user/profile">
+                        <img src="{user['picture']}" alt="Profile Picture" class="profile-picture">
+                    </a>
+                </div>
+                <div>
+                    <a href="/signout">Sign Out</a>
+                </div>
             </header>
             <main>
                 <h1>Welcome to Your Dashboard, {user['display_name']}!</h1>
@@ -145,6 +152,18 @@ async def user_profile(user: dict = Depends(get_user)):
         </html>
     """
     return HTMLResponse(content=html_content)
+
+@app.get("/signout", response_class=HTMLResponse)
+async def sign_out():
+    """
+    Signs out the user by clearing the session.
+    """
+    # Clear the user session
+    user_sessions.clear()
+
+    # Redirect to the home page after sign-out
+    return RedirectResponse(url="/")
+
 
 if __name__ == "__main__":
     import uvicorn
