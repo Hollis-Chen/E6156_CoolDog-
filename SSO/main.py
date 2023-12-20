@@ -9,7 +9,7 @@ app = FastAPI()
 # Replace with your actual Google API credentials
 CLIENT_ID = "808583469127-vdok1207i7asec52bakknkla2f9rvlr2.apps.googleusercontent.com"
 CLIENT_SECRET = "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"
-OAUTH_URL = "http://localhost:5000"  # Update with your actual server URL
+OAUTH_URL = "http://3.210.123.50.nip.io:5000"  # Update with your actual server URL
 
 google_sso = GoogleSSO(
     client_id=CLIENT_ID,
@@ -75,7 +75,8 @@ async def auth_callback(request: Request, user: GoogleSSO = Depends(google_sso.v
     user_sessions[session_id] = user_data
 
     # Set session_id cookie in the response
-    response = RedirectResponse(url="/dashboard")
+    response = RedirectResponse(url="/reading_group")
+    # response = RedirectResponse(url="http://3.210.123.50:5000/reading_group")
     response.set_cookie(key="session_id", value=session_id)
     return response
 
