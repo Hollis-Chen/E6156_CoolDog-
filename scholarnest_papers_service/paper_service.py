@@ -17,6 +17,7 @@ app = FastAPI()
 origins = [
     "http://3.210.123.50:5000",
     "https://54.198.27.88:5000",
+    "http://3.210.123.50.nip.io:5000",
 ]
 
 app.add_middleware(

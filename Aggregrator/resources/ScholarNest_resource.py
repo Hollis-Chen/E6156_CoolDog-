@@ -3,236 +3,182 @@ import asyncio
 import aiohttp
 import json
 import time
-from pydantic import BaseModel
-import asyncio
-import aiohttp
-import json
-import time
 import requests
 from aiohttp import ClientSession
-
-
-
-#####################################
-#########  my testbench
-#########################################
-class user(BaseModel):
-    name: str
+import random
 
 
 
 
-class scholarResource:
-    #
-    # These endpoints are on SwaggerHub mock APIs
-    #
 
-    resources = [
-        {
-            "resource": "activities",
-            "url": 'https://virtserver.swaggerhub.com/YC4140/scholarnest_activities/1.0.0'
-        },
-        {
-            "resource": "users",
-            "url": 'https://virtserver.swaggerhub.com/YC4140/scholarnest_user/1.0.0'
-        },
-        {
-            "resource": "papers",
-            "url": 'https://virtserver.swaggerhub.com/YC4140/Scholarnest_papers/1.0.0'
-        }
-    ]
+# #############################
+# ####### ScholarNest Aggregrator:
+# ###########
+# ########################
+
+class User(BaseModel):
+    user_id: str
+
+class ScholarResource:
+
+    paper_ids = [
+        77490025, 77490084, 77490191, 77490289, 77490322, 77490340, 77490349, 77490515,
+        77490720, 77490837, 77490849, 77490871, 77491094, 77491174, 77491215, 77491274,
+        77491423, 77491534, 77491577, 77491863, 77491866, 77491955, 77491964, 77492035,
+        77492214, 77492325, 77492438, 77492504, 77492582, 77492598, 77492599, 77492789,
+        77492792, 77492800, 77492841, 77492970, 77493062, 77493076, 77493177, 77493189,
+        77493227, 77493266, 77493269, 77493472, 77493547, 77493615, 77493656, 77493666,
+        77493906, 77494140, 77494168, 77494170, 77494393, 77494666, 77494904, 77495000,
+        77495056, 77495099, 77495155, 77495195, 77495206, 77495361, 77495918, 77495972,
+        77495986, 77496040, 77496157, 77496272, 77496281, 77496361, 77496469, 77496514,
+        77496589, 77496593, 77496769, 77496802, 77496846, 77497058, 77497217, 77497258,
+        77497277, 77497368, 77497749, 77497903, 77497951, 77497994, 77498157, 77498198,
+        77498298, 77498366, 77498383, 77498402, 77498535, 77498570, 77498583, 77498791,
+        77498918, 77498923, 77498969, 77499451, 77499546, 77499681, 77499772, 77499881,
+        77499980, 77499998, 66482199, 66485085, 94550656, 94550757, 94551057, 94551157,
+        94551239, 94551428, 94551461, 94551546, 94551612, 94551733, 94551827, 94552018,
+        94552136, 94552309, 94552339, 94552707, 94552965, 94553336, 94553349, 94553452,
+        94553485, 94553606, 94553816, 94554010, 94554072, 94554257, 94554348, 94554499,
+        94554727, 94554780, 94554818, 94555004, 94556018, 94556393, 94556483, 94556504,
+        94556645, 94556665, 94556746, 94556835, 94556881, 94556992, 94557215, 94557287,
+        94557304, 94557397, 94557629, 94557639, 94557733, 94558410, 94558598, 94558897,
+        94558998, 94559072, 94559152, 94559180, 94559299, 94559830, 94559890, 94559909,
+        159350008, 159350322, 159350817, 159350877, 159350887, 159351415, 159351417,
+        159351714, 159351770, 159351850, 159351980, 159352217, 159352244, 159352431,
+        159352497, 159352529, 159352734, 159352891, 159353340, 159353517, 159354411,
+        159354450, 159354472, 159354684, 159354959, 159355139, 159355187, 159355456,
+        159355460, 159355601, 159355939, 159355950, 159357176, 159357595, 159357887,
+        159358149, 159358152, 159358219, 159358222, 159358374, 159358512, 159358666,
+        159358864, 159359058, 159359133, 159359402, 159359453, 159359710, 159359750,
+        159359827, 159359922, 18980190, 18980380, 18980463, 18980535, 18980811, 18981111,
+        18981201, 18981319, 18981336, 18981358, 18981625, 18982114, 18982127, 18982341,
+        18982460, 18982496, 18982504, 18982512, 18982781, 18983082, 18983391, 18984129,
+        18984386, 18984455, 18984609, 18984674, 18984807, 18985171, 18985384, 18985891,
+        18986705, 18986901, 18987064, 18987532, 18987535, 18987990, 18988046, 18988104,
+        18988615, 18989067, 18989187, 18989318, 18989350, 18989559, 18989713, 18989842,
+        199660318, 199660526, 199660689, 199660881, 199661072, 199661087, 199661181,
+        199661310, 199661597, 199661662, 199661683, 199661892, 199661969, 199662147,
+        199662295, 199662539, 199662763, 199662766, 199662866, 199662966, 199663138,
+        199663473, 199663484, 199663786, 199664249, 199664457, 199664595, 199664911,
+        199664931, 199665186, 199665266, 199665542, 199665735, 199665950, 199666091,
+        199666740, 199666746, 199666823, 199666980, 199667935, 199667938, 199668067,
+        199668072, 199668440, 199668529, 199668547, 199668877, 199668887, 199668943,
+        199669259, 199669303, 199669489, 199669503, 2870029, 2870075, 2870145, 2870252,
+        2870454, 2870531, 2870542, 2870776, 2870829, 2870859, 2870941, 2870958, 2871179,
+        2871240, 2871295, 2871443, 2871533, 2871546, 2871630, 2871678, 2871742, 2871844,
+        2871896, 2871940, 2872115, 2872261, 2872418, 2872500, 2872518, 2872538, 2872580,
+        2872613, 2872653, 2872745, 2872803, 2872933, 2873021, 2873489, 2873661, 2873723,
+        2874018, 2874048, 2874086, 2874113, 2874147, 2874205, 2874360, 2874456, 2874531,
+        2874570, 2874584, 2874677, 2874910, 2874988, 2875102, 2875387, 2875502, 2875567,
+        2875752, 2876134, 2876274, 2876496, 2876699, 2876847, 2876862, 2876941, 2877021,
+        2877038, 2877272, 2877363, 2877399, 2877433, 2877504, 2877521, 2877551, 2877715,
+        2878017, 2878382, 2878408, 2878434, 2878538, 2878550, 2878623, 2878678, 2878772,
+        2878780, 2878811, 2879053, 2879211, 2879218, 2879242, 2879270, 2879409, 2879548,
+        2879615, 2879621, 2879698, 2879848, 2879952, 213460134, 213460245, 213460301,
+        213460319, 213460493, 213460569, 213460582, 213460721, 213460865, 213460959,
+        213461149, 213461566, 213461736, 213461740, 213461816, 213461867, 213462025,
+        213462133, 213462289, 213462350, 213462444, 213462566, 213462735, 213463382,
+        213463694, 213463698, 213463721, 213463867, 213463945, 213464597, 213465427,
+        213465547, 213465552, 213465620, 213465864, 213466066, 213466329, 213466413,
+        213466784, 213467066, 213467256, 213467367, 213467525, 213467532, 213467900,
+        213468150, 213468212, 213468578, 213468582, 213468690, 213468692, 213469298,
+        213469445, 213469557, 213469637, 213469780, 213469879, 213469991, 177040595,
+        177041210, 177043437, 177043827, 177045333, 177047401, 177048962, 177049261,
+        177049974, 213340326, 213340841, 213341263, 213341382, 213341928, 213341949,
+        213342116, 213342213, 213342491, 213342526, 213342903, 213343016, 213343229,
+        213343538, 213343633, 213343657, 213343826, 213344025, 213344162, 213344291,
+        213344388, 213344525, 213344532, 213344684, 213344712, 213344876, 213344902,
+        213344963, 213344970, 213344988, 213345033, 213345137, 213345142, 213345163,
+        213345383, 213345417, 213345445, 213345559, 213345602, 213345726, 213346042,
+        213346106, 213346164, 213346254, 213346306, 213346353, 213346865, 213346953,
+        213346981, 213347097, 213347416, 213347651, 213348009, 213348209, 213348429,
+        213348463, 213348530, 213349387, 213349720, 213349793, 213349798, 213349941,
+        147010088, 147010181, 147010188, 147010337, 147010500, 147010758, 147010765,
+        147010891, 147010945, 147011192, 147011634, 147011886, 147011990, 147012020,
+        147012160, 147012241, 147012264, 147012332, 147012361, 147012464, 147012582,
+        147012690, 147012978, 147013086, 147013192, 147013269, 147013917, 147014107,
+        147014243, 147014615, 147014638, 147014664, 147014853, 147015120, 147015257,
+        147015279, 147015306, 147015664, 147015731, 147015734, 147015787, 147016303,
+        147016480, 147016580]
 
 
-    async def get_item(self, item: user = None, sleep=5) -> str:
-        # Simulate an asynchronous operation
-        if item and item.name:
-            n = item.name
-        else:
-            n = "Item with no name."
-        await asyncio.sleep(sleep)
-        return f"Hello, {n}! This is an asynchronous response."
 
-    @classmethod
-    async def fetch(cls, session, resource):
-        url = resource["url"]
-        print("Calling URL = ", url)
-        async with session.get(url) as response:
-            t = await response.json()
-            print("URL ", url, "returned", str(t))
-            result = {
-                "resource": resource["resource"],
-                "data": t
-            }
-        return result
-
-    # async def fetch(self, url):
-    #     async with ClientSession() as session:
-    #         async with session.get(url) as response:
-    #             if response.headers.get('Content-Type') == 'application/json':
-    #                 return await response.json()
-    #             else:
-    #                 content = await response.text()
-    #                 print(f"Non-JSON response: {content}")
-    #                 return {"error": "Non-JSON response received"}
-
-    # async def fetch(cls, session, resource):
-    #     url = resource["url"]
-    #     async with session.get(url) as response:
-    #         if response.headers.get('Content-Type') == 'application/json':
-    #             return await response.json()
-    #         else:
-    #             # Handle non-JSON responses
-    #             content = await response.text()
-    #             print(f"Non-JSON response: {content}")
-    #             return {"error": "Non-JSON response received"}
-    #
+    #####
+    group_service_url = "https://e6156-402716.de.r.appspot.com/"  # Replace with actual URL
+    papers_service_url = "http://ec2-3-143-141-101.us-east-2.compute.amazonaws.com:8012/"  # Replace with actual URL
 
 
 
-    # async def get_scholarnest_async(self):
-    #     full_result = None
-    #     start_time = time.time()
-    #     async with aiohttp.ClientSession() as session:
-    #         tasks = [asyncio.ensure_future(Resource.fetch(session, res)) for res in Resource.resources]
-    #         responses = await asyncio.gather(*tasks)
-    #         full_result = {}
-    #         for response in responses:
-    #             full_result[response["resource"]] = response["data"]
-    #         end_time = time.time()
-    #         full_result["elapsed_time"] = end_time - start_time
-    #
-    #         return full_result
-    #     print("\nFull Result = ", json.dumps(full_result, indent=2))
 
-    async def get_scholarnest_async(self):
-        full_result = {}
-        start_time = time.time()
+    def __init__(self):
+       self.user_group_mapping = {}  # Stores user_id to group mapping
 
-        async with aiohttp.ClientSession() as session:
-            tasks = [asyncio.ensure_future(self.fetch_async(session, res)) for res in self.resources]
-            responses = await asyncio.gather(*tasks)
+    async def id_check(self, user_id: str):
+       if user_id in self.user_group_mapping:
+           return self.user_group_mapping[user_id]
+       else:
+           return {"message": "User not grouped"}
 
-            for res, response in zip(self.resources, responses):
-                if response.headers.get('Content-Type') == 'application/json':
-                    try:
-                        full_result[res["resource"]] = await response.json()
-                    except ValueError as e:
-                        # Handle the case where JSON parsing fails
-                        full_result[res["resource"]] = {"error": str(e)}
+    async def allocate_group(self, user_id: str):
+            # Check if the user is already allocated to a group
+       if user_id in self.user_group_mapping:
+          return self.user_group_mapping[user_id]
+
+         # Allocate a new group if not already allocated
+       group_id = random.choice([1, 2, 3])  # Assuming 3 groups
+       try:
+          response = requests.get(f"{self.group_service_url}groups/{group_id}")
+          if response.status_code == 200:
+             group_info = response.json()
+             self.user_group_mapping[user_id] = group_info  # Store the mapping
+             return group_info
+          else:
+              raise Exception("Failed to allocate group")
+       except Exception as e:
+          print(f"Exception occurred: {e}")
+          raise
+
+
+    async def fetch_papers(self, session, group_id: str):
+        try:
+            selected_ids = random.sample(self.paper_ids, 5)
+            tasks = [self.fetch_paper(session, paper_id) for paper_id in selected_ids]
+            papers = await asyncio.gather(*tasks)
+            print(f"fetch_papers_IDs:{selected_ids}")
+            print(f"fetch_papers_tasks:{tasks}")
+            print(f"fetch_papers_papers{papers}")
+
+            return papers
+        except Exception as e:
+            print(f"Exception in fetch_papers: {e}")
+            raise
+
+
+    async def fetch_personal_papers(self, session):
+        try:
+            selected_ids = random.sample(self.paper_ids, 5)
+            tasks = [self.fetch_paper(session, paper_id) for paper_id in selected_ids]
+            papers = await asyncio.gather(*tasks)
+            print(f"fetch_papers_IDs:{selected_ids}")
+            print(f"fetch_papers_tasks:{tasks}")
+            print(f"fetch_papers_papers{papers}")
+
+            return papers
+        except Exception as e:
+            print(f"Exception in fetch_papers: {e}")
+            raise
+
+    async def fetch_paper(self, session, paper_id):
+        try:
+            async with session.get(f"{self.papers_service_url}papers/search/byID/{paper_id}") as response:
+
+                if response.status == 200:
+                    return await response.json()
                 else:
-                    # Handle non-JSON responses
-                    text = await response.text()
-                    full_result[res["resource"]] = {"content": text}
-
-        end_time = time.time()
-        full_result["elapsed_time"] = end_time - start_time
-        return full_result
-
-    async def fetch_async(self, session, resource):
-        async with session.get(resource["url"]) as response:
-            return response
-
-# ########
-#     ####old code for testing
-#     #####
-#
-#     async def get_scholarnest_async(self):
-#         full_result = None
-#         start_time = time.time()
-#         async with aiohttp.ClientSession() as session:
-#             tasks = [asyncio.ensure_future(
-#                 scholarResource.fetch(session, res)) for res in scholarResource.resources]
-#             responses = await asyncio.gather(*tasks)
-#             full_result = {}
-#             for response in responses:
-#                 full_result[response["resource"]] = response["data"]
-#             end_time = time.time()
-#             full_result["elapsed_time"] = end_time - start_time
-#
-#             return full_result
-#
-#     async def get_scholarnest_sync(self):
-#         full_result = None
-#         start_time = time.time()
-#
-#         full_result = {}
-#
-#         for r in scholarResource.resources:
-#             response = requests.get(r["url"])
-#             full_result[r["resource"]] = response.json()
-#         end_time = time.time()
-#         full_result["elapsed_time"] = end_time - start_time
-#
-#         return full_result
-#     #################################
-
-    #######
-    ## working code
-    ########
-    async def get_scholarnest_sync(self):
-        full_result = None
-        start_time = time.time()
-
-        full_result = {}
-        for r in self.resources:
-            response = requests.get(r["url"])
-            if response.headers.get('Content-Type') == 'application/json':
-                try:
-                    full_result[r["resource"]] = response.json()
-                except ValueError as e:
-                    # Handle the case where JSON parsing fails
-                    full_result[r["resource"]] = {"error": str(e)}
-            else:
-                # Handle non-JSON responses
-                full_result[r["resource"]] = {"content": response.text}
-
-        return full_result
-
-#######################################################
-
-############################
-########## simple example
-#################################
-
-#
-#
-# class ScholarNestResource:
-#     resources = [
-#         {
-#             "resource": "users",
-#             "url": 'https://virtserver.swaggerhub.com/YC4140/scholarnest_users/1.0.0/api/users'
-#         },
-#         {
-#             "resource": "papers",
-#             "url": 'https://virtserver.swaggerhub.com/YC4140/Scholarnest_papers/1.0.0/api/papers'
-#         },
-#         {
-#             "resource": "groups",
-#             "url": 'https://virtserver.swaggerhub.com/YC4140/Scholarnest_groups/1.0.0/api/groups'
-#         }
-#     ]
-#
-#     @classmethod
-#     async def fetch_async(cls, session, resource):
-#         url = resource["url"]
-#         async with session.get(url) as response:
-#             data = await response.json()
-#             return {"resource": resource["resource"], "data": data}
-#
-#     async def aggregate_data_async(self):
-#         async with aiohttp.ClientSession() as session:
-#             tasks = [asyncio.ensure_future(self.fetch_async(session, res)) for res in self.resources]
-#             responses = await asyncio.gather(*tasks)
-#             return {res["resource"]: res["data"] for res in responses}
-#
-#     def fetch_sync(self, resource):
-#         response = requests.get(resource["url"])
-#         return {"resource": resource["resource"], "data": response.json()}
-#
-#     def aggregate_data_sync(self):
-#         return {res["resource"]: self.fetch_sync(res)["data"] for res in self.resources}
-#
-# ##############################################################
-
+                    print(f"Failed to fetch paper {paper_id}: {await response.text()}")
+                    return {"error": f"Failed to fetch paper {paper_id}"}
+        except Exception as e:
+            print(f"Exception in fetch_paper: {e}")
+            return {"error": f"Exception in fetching paper {paper_id}"}
 
 
