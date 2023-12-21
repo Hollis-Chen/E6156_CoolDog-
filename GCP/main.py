@@ -1,7 +1,24 @@
 from fastapi import FastAPI, HTTPException, Path
 from google.cloud import firestore
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Set up CORS middleware - replace 'your-flask-app-domain.com' with your actual domain
+origins = [
+    "http://54.198.27.88:5000",
+    "https://54.198.27.88:5000",
+    "http://34.229.204.18:5000",
+    "https://34.229.204.18:5000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows specific origins (domains)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Initialize Firestore client
 db = firestore.Client()
@@ -9,8 +26,7 @@ db = firestore.Client()
 
 @app.get("/")
 async def read_root():
-    return {"message": "Hello from groups"}
-
+    return {"message": "Hello from groups!(CORS)"}
 
 @app.get("/groups/{group_id}")
 async def read_group(group_id: int = Path(..., title="The ID of the group", ge=1, le=1000)):
