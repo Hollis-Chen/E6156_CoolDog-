@@ -1,0 +1,404 @@
+{% extends "base.html" %} {% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fetch Paper</title>
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Arial", sans-serif;
+        line-height: 1.6;
+      }
+
+      /* Paper Section */
+      #paper_section {
+        margin: auto;
+        padding: 20px;
+        max-width: 600px;
+      }
+
+      #paper_section h2 {
+        text-align: center;
+        color: #333;
+      }
+
+      /* Input Fields and Buttons */
+      input[type="text"],
+      button {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
+      }
+
+      button {
+        border: none;
+        background-color: #5cb85c;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #4cae4c;
+      }
+
+      /* Paper Data Container */
+      #papers_list {
+        background-color: #f7f7f7;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 20px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <section id="paper_section">
+      <h2>Paper Information</h2>
+
+      <input
+        type="text"
+        id="paperIdInput"
+        placeholder="Enter Paper ID"
+        required
+      />
+      <button id="searchPaperIDButton">Find Paper By Id</button>
+
+      <input
+        type="text"
+        id="paperKeyword"
+        placeholder="Enter Paper Keyword"
+        required
+      />
+      <button id="searchPaperKeywordButton">Find Paper By Keyword</button>
+
+      <input
+        type="text"
+        id="paperIdToUpdate"
+        placeholder="Enter Paper ID for Update"
+        required
+      />
+      <input
+        type="text"
+        id="newPaperTitle"
+        placeholder="Enter New Paper Title"
+        required
+      />
+      <button id="updatePaperTitleButton">Update Paper Title</button>
+
+      <input
+        type="text"
+        id="addPaperID"
+        placeholder="Enter Paper ID"
+        required
+      />
+      <input
+        type="text"
+        id="addPaperTitle"
+        placeholder="Enter Paper Title"
+        required
+      />
+      <input
+        type="text"
+        id="addPaperAuthors"
+        placeholder="Enter Paper Authors"
+        required
+      />
+      <input
+        type="text"
+        id="addPaperAbstract"
+        placeholder="Enter Paper Abstract"
+        required
+      />
+      <button id="addPaperButton">Add Paper</button>
+
+      <input
+        type="text"
+        id="deletePaperId"
+        placeholder="Enter Paper ID to Delete"
+        required
+      />
+      <button id="deletePaperButton">Delete Paper</button>
+
+      <div id="papers_list">
+        <!-- Paper details will be listed here -->
+      </div>
+    </section>
+
+    <script>
+      function displayPaperData(paper) {
+        var content = `
+      <table>
+        <tr><th>ID</th><td>${paper.paper_id}</td></tr>
+        <tr><th>Title</th><td>${paper.title}</td></tr>
+        <tr><th>Authors</th><td>${paper.authors}</td></tr>
+        <tr><th>Abstract</th><td>${paper.abstract}</td></tr>
+      </table>
+  `;
+        document.getElementById("papers_list").innerHTML = content;
+      }
+
+      document
+        .getElementById("searchPaperIDButton")
+        .addEventListener("click", function () {
+          const paperId = document.getElementById("paperIdInput").value;
+          if (paperId) {
+            fetchPaperById(paperId);
+          }
+        });
+
+      function fetchPaperById(paperId) {
+        // If the input is empty, don't attempt to fetch
+        if (!paperId.trim()) {
+          alert("Please enter a paper ID.");
+          return;
+        }
+
+        // Construct the URL with the paper ID
+        const url = `http://ec2-3-143-141-101.us-east-2.compute.amazonaws.com:8012/papers/search/byID/${paperId}`;
+
+        fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((paper) => {
+            // Clear the list
+            const papersList = document.getElementById("papers_list");
+            papersList.innerHTML = "";
+
+            // Create elements for paper details
+            const paperItem = document.createElement("div");
+            paperItem.textContent = `Title: ${paper.title}, ID: ${paper.paper_id}, Authors: ${paper.authors}`;
+            papersList.appendChild(paperItem);
+            displayPaperData(paper);
+          })
+          .catch((error) => {
+            console.error("Error fetching paper:", error);
+            alert(
+              "Error fetching paper. Please check the console for more information."
+            );
+          });
+      }
+
+      document
+        .getElementById("searchPaperKeywordButton")
+        .addEventListener("click", function () {
+          const paperKeyword = document.getElementById("paperKeyword").value;
+          if (paperKeyword) {
+            fetchPapersByKeyword(paperKeyword);
+          }
+        });
+
+      function fetchPapersByKeyword(keyword) {
+        if (!keyword.trim()) {
+          alert("Please enter a keyword to search for papers.");
+          return;
+        }
+
+        // Construct the URL with the keyword
+        const url = `http://ec2-3-143-141-101.us-east-2.compute.amazonaws.com:8012/papers/search/byKeyword/${encodeURIComponent(
+          keyword
+        )}`;
+
+        fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((papers) => {
+            // Clear the list
+            const papersList = document.getElementById("papers_list");
+            papersList.innerHTML = "";
+
+            // Assuming the API returns an array of papers
+            papers.forEach((paper) => {
+              // Create elements for paper details
+              const paperItem = document.createElement("div");
+              paperItem.textContent = `Title: ${paper.title}, ID: ${paper.paper_id}, Authors: ${paper.authors}`;
+              papersList.appendChild(paperItem);
+              displayPaperData(paper);
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching papers:", error);
+            alert(
+              "Error fetching papers. Please check the console for more information."
+            );
+          });
+      }
+
+      document
+        .getElementById("updatePaperTitleButton")
+        .addEventListener("click", function () {
+          const paperId = document.getElementById("paperIdToUpdate").value;
+          const newTitle = document.getElementById("newPaperTitle").value;
+          if (paperId && newTitle) {
+            updatePaperTitle(paperId, newTitle);
+          } else {
+            alert("Please enter both a paper ID and a new title.");
+          }
+        });
+
+      function updatePaperTitle(paperId, newTitle) {
+        const encodedPaperId = encodeURIComponent(paperId);
+        const encodedNewTitle = encodeURIComponent(newTitle);
+
+        const url = `http://ec2-3-143-141-101.us-east-2.compute.amazonaws.com:8012/papers/update/updateTitle/${encodedPaperId}?updated_title=${encodedNewTitle}`;
+
+        fetch(url, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title: newTitle }), // assuming the backend expects a JSON payload with the new title
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((updatedPaper) => {
+            alert("Paper title updated successfully.");
+            // Update the UI to reflect the new title or log it to the console
+            console.log("Updated Paper:", updatedPaper);
+            displayPaperData(updatedPaper);
+          })
+          .catch((error) => {
+            console.error("Error updating paper title:", error);
+            alert(
+              "Error updating paper title. Please check the console for more information."
+            );
+          });
+      }
+
+      document
+        .getElementById("addPaperButton")
+        .addEventListener("click", function () {
+          const id = document.getElementById("addPaperID").value;
+          const title = document.getElementById("addPaperTitle").value;
+          const authors = document.getElementById("addPaperAuthors").value;
+          const abstract = document.getElementById("addPaperAbstract").value;
+          if (title && authors && abstract) {
+            addPaper(id, title, authors, abstract);
+          } else {
+            alert("Please enter title, authors, and abstract for the paper.");
+          }
+        });
+
+      function addPaper(id, title, authors, abstract) {
+        const paperData = {
+          paper_id: id,
+          title: title,
+          authors: authors,
+          abstract: abstract,
+          year: 0,
+          arxiv_id: "string",
+          acl_id: "string",
+          pmc_id: "string",
+          pubmed_id: "string",
+          doi: "string",
+          venue: "string",
+          journal: "string",
+          mag_id: "string",
+          outbound_citations: "string",
+          inbound_citations: "string",
+          has_outbound_citations: true,
+          has_inbound_citations: true,
+          has_pdf_parse: true,
+          s2_url: "string",
+        };
+
+        const url = `http://ec2-3-143-141-101.us-east-2.compute.amazonaws.com:8012/papers/add`;
+
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(paperData),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            alert("Paper added successfully.");
+            displayPaperData(data);
+          })
+          .catch((error) => {
+            console.error("Error adding paper:", error);
+            alert(
+              "Error adding paper. Please check the console for more information."
+            );
+          });
+      }
+
+      document
+        .getElementById("deletePaperButton")
+        .addEventListener("click", function () {
+          const paperId = document.getElementById("deletePaperId").value;
+          if (paperId) {
+            deletePaper(paperId);
+          } else {
+            alert("Please enter the paper ID to delete.");
+          }
+        });
+
+      function deletePaper(paperId) {
+        const url = `http://ec2-3-143-141-101.us-east-2.compute.amazonaws.com:8012/papers/delete/${encodeURIComponent(
+          paperId
+        )}`;
+
+        fetch(url, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            alert("Paper deleted successfully.");
+            document.getElementById("papers_list").innerHTML = ""; // Clear the display
+          })
+          .catch((error) => {
+            console.error("Error deleting paper:", error);
+            alert(
+              "Error deleting paper. Please check the console for more information."
+            );
+          });
+      }
+    </script>
+  </body>
+</html>
+
+{% endblock %}

@@ -1,0 +1,220 @@
+.container {
+    display: flex;
+    min-height: 92vh;
+}
+
+.sidebar {
+    width: 300px;
+    background: #333;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.sidebar h1 {
+    color: white;
+    text-transform: uppercase;
+}
+
+.sidebar nav a {
+    display: block;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    margin: 5px 0;
+    background: #007BFF;
+    border-radius: 3px;
+    transition: background-color 0.3s;
+}
+
+.sidebar nav a:hover {
+    background-color: #0056b3;
+}
+
+.content {
+    flex-grow: 1;
+    background-color: #f5f5f5;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+footer {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #333;
+    color: white;
+    width: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 90vh; /* Set the minimum height of the body to 100% of the viewport height */
+    margin: 0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+button[type="submit"] {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.paper-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.section-heading {
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+.button-group {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Arial', sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.button.import { background-color: #4CAF50; color: white; }
+.button.create { background-color: #2196F3; color: white; }
+.button.update { background-color: #f0ad4e; color: white; }
+.button.delete { background-color: #d9534f; color: white; }
+
+.button:hover {
+  opacity: 0.9;
+}
+
+.papers-table-container {
+  overflow-x: auto;
+}
+
+#imported-papers-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#imported-papers-table th,
+#imported-papers-table td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+#imported-papers-table th {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.create-paper-form {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px; /* Space between form and buttons */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .create-paper-form input[type="text"],
+  .create-paper-form textarea {
+    width: calc(100% - 22px); /* Full width minus padding and border */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  }
+  
+  .create-paper-form button {
+    background-color: #28a745; /* Bootstrap success color */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px; /* Space above the button */
+  }
+  
+  .create-paper-form button:hover {
+    background-color: #218838; /* Darker green on hover */
+  }
+  
+  /* Style adjustments for the table headers */
+  #imported-papers-table th {
+    background-color: #333; /* Dark background for the table header */
+    color: white;
+  }
+  
+  /* Button styles for consistency */
+  .button {
+    display: inline-block; /* Align buttons side by side */
+    padding: 10px 15px; /* Slightly less padding for a balanced look */
+    margin: 0 5px; /* Reduced margin between buttons */
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    line-height: 1.5;
+    transition: background-color 0.3s ease;
+  }
+  
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+  
+    .content {
+      padding: 20px 10px; /* Reduced padding on smaller screens */
+    }
+    
+    .button-group, .create-paper-form {
+      text-align: left; /* Align buttons and form inputs to the left on smaller screens */
+    }
+    
+    .button {
+      display: block; /* Stack buttons vertically on smaller screens */
+      width: 100%; /* Full width buttons on smaller screens */
+      margin-bottom: 10px; /* Space between stacked buttons */
+    }
+  }
+  

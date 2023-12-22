@@ -1,0 +1,297 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<style>
+  /* General Styles */
+  body {
+    font-family: "Arial", sans-serif;
+    line-height: 1.6;
+  }
+
+  /* Reading Group Section */
+  #reading_group {
+    margin: auto;
+    padding: 20px;
+    max-width: 600px;
+  }
+
+  #reading_group h2 {
+    text-align: center;
+    color: #333;
+  }
+
+  /* Input Fields and Buttons */
+  input[type="number"],
+  input[type="text"],
+  button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+  }
+
+  button {
+    border: none;
+    background-color: #5cb85c;
+    color: white;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #4cae4c;
+  }
+
+  /* Group Data Container */
+  #groupDataContainer {
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 20px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  /* Table Style */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  table, th, td {
+    border: 1px solid black;
+  }
+
+  th, td {
+    padding: 10px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+</style>
+
+<section id="reading_group">
+  <h2>Reading Group</h2>
+
+  <input type="number" id="groupIdInput" placeholder="Enter Your Group ID" min="1" max="1000" required />
+  <button id="loadGroupButton">Display Group</button>
+  <button id="deleteGroupButton">Delete Group</button>
+  <button id="createGroupButton">Create Group</button>
+  <button id="updateGroupButton">Update Group</button>
+
+  <div id="groupDataContainer"></div>
+
+  <form id="updateGroupForm" style="display: none;">
+    <input type="number" id="updateGroupIdInput" placeholder="Enter Group ID" min="1" max="1000" required />
+    <input type="text" id="updateGroupNameInput" placeholder="Enter Group Name" required />
+    <input type="number" id="updateGroupSizeInput" placeholder="Enter Group Size" required />
+    <button type="submit">Submit Update</button>
+  </form>
+  
+  <!-- JavaScript for handling actions -->
+  <script>
+    // Display function to show group data in a table
+    function displayGroupData(data) {
+      var content = `
+          <table>
+            <tr><th>ID</th><td>${data.id}</td></tr>
+            <tr><th>Name</th><td>${data.group_name}</td></tr>
+            <tr><th>Size</th><td>${data.group_size}</td></tr>
+          </table>
+      `;
+      document.getElementById("groupDataContainer").innerHTML = content;
+    }
+
+    // Fetch and display group data
+    function fetchAndDisplayGroupData(groupId) {
+        fetch(`https://e6156-402716.de.r.appspot.com/groups/${groupId}`) 
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error(
+              "Network response was not ok " + response.statusText
+            );
+          }
+          return response.json();
+        })
+        .then(displayGroupData)
+        .catch(function (error) {
+          console.error("Error during fetch:", error);
+          document.getElementById("groupDataContainer").textContent =
+            "Group cannot be found.";
+        });
+    }
+
+    // Load group event
+    document.getElementById("loadGroupButton").addEventListener("click", function () {
+        var groupId = document.getElementById("groupIdInput").value;
+        if (!groupId) {
+          alert("Please enter a group ID.");
+          return;
+        }
+        fetchAndDisplayGroupData(groupId);
+      });
+
+    document
+      .getElementById("updateGroupButton")
+      .addEventListener("click", function () {
+        var groupId = document.getElementById("updateGroupIdInput").value;
+        var groupName = document.getElementById("updateGroupNameInput").value;
+        var groupSize = document.getElementById("updateGroupSizeInput").value;
+
+        if (!groupId || !groupName || !groupSize) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        var updateData = {
+          group_name: groupName,
+          group_size: groupSize,
+        };
+
+        fetch(`https://e6156-402716.de.r.appspot.com/groups/${groupId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updateData),
+        })
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error(
+                "Network response was not ok " + response.statusText
+              );
+            }
+            return response.json();
+          })
+          .then(function (data) {
+            console.log("Update Successful:", data);
+            fetchAndDisplayGroupData(groupId); // Refresh group data display
+          })
+          .catch(function (error) {
+            console.error("Error during fetch:", error);
+          });
+    });
+
+    // Update group event
+    document.getElementById("updateGroupButton").addEventListener("click", function () {
+      // Show the update form and hide other elements
+      document.getElementById("updateGroupForm").style.display = 'block';
+      document.getElementById("groupDataContainer").style.display = 'none';
+    });
+
+    // Create group event
+    document.getElementById("createGroupButton").addEventListener("click", function () {
+  var groupId = prompt("Enter the ID of the new group:");
+  var groupName = prompt("Enter the name of the new group:");
+  var groupSize = prompt("Enter the size of the new group:");
+
+  if (!groupId || !groupName || !groupSize) {
+    alert("Please provide group ID, name, and size.");
+    return;
+  }
+
+  var createData = {
+    id: groupId,
+    group_name: groupName,
+    group_size: groupSize,
+  };
+
+  fetch("https://e6156-402716.de.r.appspot.com/groups/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(createData),
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("Network response was not ok: " + response.statusText);
+    }
+    return response.json();
+  })
+  .then((data) => {
+    console.log("Group Created:", data);
+    fetchAndDisplayGroupData(groupId); // Use the provided groupId to fetch and display group data
+  })
+  .catch((error) => {
+    console.error("Error:", error);
+    alert("Error creating group: " + error.message);
+  });
+});
+
+// Delete group event
+document.getElementById("deleteGroupButton").addEventListener("click", function () {
+  var groupId = document.getElementById("groupIdInput").value;
+
+  if (!groupId) {
+    alert("Please enter a group ID to delete.");
+    return;
+  }
+
+  fetch(`https://e6156-402716.de.r.appspot.com/groups/${groupId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    console.log("Group Deleted");
+    document.getElementById("groupDataContainer").innerHTML = "<p>Group has been deleted.</p>";
+  })
+  .catch((error) => console.error("Error:", error));
+});
+
+// Submit update form
+document.getElementById("updateGroupForm").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  var groupId = document.getElementById("updateGroupIdInput").value;
+  var groupName = document.getElementById("updateGroupNameInput").value;
+  var groupSize = document.getElementById("updateGroupSizeInput").value;
+
+  if (!groupId || !groupName || !groupSize) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  var updateData = {
+    groupId: groupId,
+    group_name: groupName,
+    group_size: groupSize,
+  };
+
+  fetch(`https://e6156-402716.de.r.appspot.com/groups/${groupId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updateData),
+  })
+  .then(function (response) {
+    if (!response.ok) {
+      throw new Error("Network response was not ok " + response.statusText);
+    }
+    return response.json();
+  })
+  .then(function (data) {
+  console.log("Update Successful:", data);
+  var updatedGroupId = data.id; 
+  if(updatedGroupId){
+    fetchAndDisplayGroupData(updatedGroupId); 
+  } else {
+    console.error("Updated group ID not found in response");
+  }
+});
+});
+
+  </script>
+</section
+{% endblock %}

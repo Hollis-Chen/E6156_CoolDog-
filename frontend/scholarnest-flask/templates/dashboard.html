@@ -1,0 +1,183 @@
+{% extends "base.html" %} {% block content %}
+<style>
+  #dashboard input[type="text"],
+  #dashboard button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+  }
+
+  #dashboard button {
+    border: none;
+    background-color: #5cb85c;
+    color: white;
+    cursor: pointer;
+  }
+
+  #dashboard button:hover {
+    background-color: #4cae4c;
+  }
+
+  #paperInfoDisplay {
+    background-color: #f9f9f9;
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  #paperInfoDisplay th,
+  #paperInfoDisplay td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  #paperInfoDisplay th {
+    background-color: #f2f2f2;
+  }
+</style>
+
+<section id="dashboard">
+  <h2>My Dashboard</h2>
+  <!-- Form for Adding Aggregate Data -->
+  <form id="addAggregateDataForm">
+    <input type="text" id="dataField1" placeholder="Enter User ID" required />
+    <!-- Include other input fields as necessary -->
+    <button type="button" onclick="addAggregateData()">Add Data</button>
+  </form>
+
+  <!-- Form for Getting User Info -->
+  <form id="getUserInfoForm">
+    <input type="text" id="userId" placeholder="Enter User ID" required />
+    <button type="button" onclick="getUserInfo()">Get User Info</button>
+  </form>
+
+  <!-- Form for Getting User Papers -->
+  <form id="getUserPapersForm">
+    <input type="text" id="userPapersId" placeholder="Enter User ID" required />
+    <button type="button" onclick="getUserPapers()">Get User Papers</button>
+  </form>
+
+  <div id="paperInfo">
+    <table id="paperInfoDisplay">
+      <!-- Paper details will be displayed here -->
+    </table>
+  </div>
+
+  <!-- JavaScript for handling actions -->
+  <script>
+    function addAggregateData() {
+      const userId = document.getElementById("dataField1").value;
+
+      // Make sure to include all necessary fields the server expects
+      const url = new URL(
+        "http://ec2-54-81-211-52.compute-1.amazonaws.com:8000/aggregate_data"
+      );
+      url.searchParams.append("user_id", userId);
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: dataField1 }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            // If the response is not ok, parse the error message from the response body
+            return response.json().then((err) => Promise.reject(err));
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          displayPaperData(data); // Update to display data
+        })
+        .catch((error) => {
+          console.error("Error adding data:", error);
+          // If the error is not in the expected format, stringify it
+          const errorDetail = error.detail
+            ? error.detail
+            : JSON.stringify(error);
+          console.error("Error detail:", errorDetail);
+        });
+    }
+
+    function getUserInfo() {
+      const userId = document.getElementById("userId").value;
+
+      fetch(
+        `http://ec2-54-81-211-52.compute-1.amazonaws.com:8000/user_info/${userId}`
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok.");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          if (Object.keys(data).length === 0 || data.message === "User not grouped") {
+            alert("User not grouped");
+          } else {
+            displayPaperData(data); // Update to display data
+          }
+        })
+        .catch((error) => {
+          console.error("Error getting user info:", error);
+        });
+    }
+
+    function getUserPapers() {
+      const userId = document.getElementById("userPapersId").value;
+
+      fetch(
+        `http://ec2-54-81-211-52.compute-1.amazonaws.com:8000/user_papers/${userId}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          displayPaperData(data); // Update to display data
+        })
+        .catch((error) => {
+          console.error("Error getting user papers:", error);
+        });
+    }
+
+    function displayPaperData(data) {
+      let content = "";
+
+      if (data.group) {
+        content += `
+      <h3>Group Details</h3>
+      <p>Name: ${data.group.group_name}</p>
+      <p>Size: ${data.group.group_size}</p>
+    `;
+      }
+
+      if (data.papers && Array.isArray(data.papers)) {
+        content += "<h3>Papers</h3>";
+        data.papers.forEach((paper) => {
+          content += `
+        <p>ID: ${paper.paper_id}</p>
+        <p>Title: ${paper.title}</p>
+        <p>Authors: ${paper.authors}</p>
+        <p>Abstract: ${paper.abstract || "N/A"}</p>
+        <p>Year: ${paper.year}</p>
+        <p>DOI: ${paper.doi || "N/A"}</p>
+        <p>URL: <a href="${paper.s2_url}" target="_blank">${
+            paper.s2_url
+          }</a></p>
+        <hr />
+      `;
+        });
+      }
+      document.getElementById("paperInfoDisplay").innerHTML = content;
+    }
+  </script>
+</section>
+
+{% endblock %}

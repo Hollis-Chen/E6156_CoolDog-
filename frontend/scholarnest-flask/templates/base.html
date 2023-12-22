@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ScholarNest</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <style>
+      /* Add custom CSS styles here */
+      body {
+        background-image: url("static/background.png");
+        background-size: cover;
+        background-attachment: fixed;
+      }
+
+      .content {
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin: 20px;
+      }
+
+      footer {
+        background: #212529; /* Darker shade for the footer */
+        color: #adb5bd; /* Lighter text for contrast */
+        border-top: 4px solid #007bff; /* Accent border-top matching the buttons */
+      }
+
+      .sidebar nav a {
+        transition: all 0.3s ease; /* Smooth transition for hover effects */
+      }
+
+      .sidebar nav a:hover {
+        background: #0056b3;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); /* Shadow effect for depth */
+        transform: scale(1.05); /* Slightly enlarge on hover */
+      }
+
+      .content {
+        flex-grow: 1;
+        background-color: #f5f5f5;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      footer {
+        text-align: center;
+        padding: 10px 0;
+        background-color: #333;
+        color: white;
+        width: 100%;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 90vh;
+        margin: 0;
+      }
+
+      /* User info styling */
+      .user-info {
+        background-color: #007bff;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .user-info p {
+        margin: 0;
+        color: white;
+        font-weight: bold;
+      }
+
+      .user-info a {
+        color: white;
+        text-decoration: none;
+        margin-top: 5px;
+        display: block;
+      }
+
+      .user-info a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <aside class="sidebar">
+        <h1>ScholarNest</h1>
+        {% if 'user' in session %}
+        <div class="user-info">
+          <!-- User headshot -->
+          <button
+            id="user-headshot-btn"
+            style="background: none; border: none; padding: 0; cursor: pointer"
+          >
+            <img
+              src="{{ session['user'].get('picture', 'url_to_default_image') }}"
+              alt="User headshot"
+              id="user-headshot"
+              style="width: 50px; height: 50px; border-radius: 50%"
+            />
+          </button>
+
+          <div id="detailed-info" style="display: none">
+            <p>Welcome, {{ session['user'].get('name', 'Guest') }}</p>
+            <p>
+              Email: {{ session['user'].get('email', 'No email provided') }}
+            </p>
+          </div>
+
+          <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+        {% endif %}
+        <nav>
+          <a href="{{ url_for('dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('my_papers') }}">My Papers</a>
+          <a href="{{ url_for('reading_group') }}">Reading Group</a>
+          <a href="{{ url_for('link_zotero') }}">Link with Zotero</a>
+        </nav>
+      </aside>
+
+      <main class="content">{% block content %}{% endblock %}</main>
+    </div>
+
+    <footer>
+      <p>© 2023 ScholarNest - All Rights Reserved</p>
+    </footer>
+
+    <script>
+      // JavaScript to toggle the detailed info on click
+      document.addEventListener("DOMContentLoaded", (event) => {
+        const userHeadshotBtn = document.getElementById("user-headshot-btn");
+        const detailedInfo = document.getElementById("detailed-info");
+
+        if (userHeadshotBtn) {
+          userHeadshotBtn.addEventListener("click", () => {
+            detailedInfo.style.display =
+              detailedInfo.style.display === "none" ? "block" : "none";
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

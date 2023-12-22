@@ -1,0 +1,51 @@
+{% extends "base.html" %} {% block content %}
+<section id="link_zotero">
+  <h2>Link to Zotero</h2>
+  <form id="zotero-link-form">
+    <input type="text" id="zotero-user-id" name="userId" />
+    <input type="text" id="zotero-api-key" name="apiKey" />
+    <button type="submit">Link Zotero</button>
+  </form>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var form = document.getElementById("zotero-link-form");
+    if (form) {
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        var userId = document.getElementById("zotero-user-id").value;
+        var apiKey = document.getElementById("zotero-api-key").value;
+
+        fetch("/link_zotero", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: userId, apiKey: apiKey }),
+        })
+          .then((response) => {
+            if (response.status >= 300 && response.status < 400) {
+              // Redirect detected, extract the Location header
+              var redirectUrl = response.headers.get("Location");
+              window.location.href = redirectUrl;
+            } else if (response.status === 200) {
+              return response.json(); // Parse JSON response
+            } else {
+              throw new Error("Server error");
+            }
+          })
+          .then((data) => {
+            if (data && data.error) {
+              alert(data.error);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again later.");
+          });
+      });
+    }
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,269 @@
+{% extends "base.html" %} {% block content %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/styles.css') }}"
+/>
+
+<section id="import_papers" class="paper-section">
+  <h2 class="section-heading">Import Papers from Zotero</h2>
+  <div class="button-group">
+    <button id="import-papers-button" class="button import">
+      Import Papers
+    </button>
+    <button id="create-paper-button" class="button create">Create Paper</button>
+    <button id="update-paper-button" class="button update">Update Paper</button>
+    <button id="delete-paper-button" class="button delete">
+      Delete Selected Papers
+    </button>
+  </div>
+  <!-- Input fields for creating or updating a paper, initially hidden -->
+  <div id="input-fields" style="display: none">
+    <input type="text" id="paper-title" placeholder="Title" />
+    <input type="text" id="paper-authors" placeholder="Authors" />
+    <textarea id="paper-abstract" placeholder="Abstract"></textarea>
+  </div>
+  <div class="papers-table-container">
+    <table id="imported-papers-table">
+      <thead style="display: none">
+        <tr>
+          <th>Select</th>
+          <th>Title</th>
+          <th>Author(s)</th>
+          <th>Abstract</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Fetched papers will be displayed here -->
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const importButton = document.getElementById("import-papers-button");
+    const createButton = document.getElementById("create-paper-button");
+    const updateButton = document.getElementById("update-paper-button");
+    const deleteButton = document.getElementById("delete-paper-button");
+    const inputFields = document.getElementById("input-fields");
+
+    importButton.addEventListener("click", function () {
+      if (inputFields.style.display === "none") {
+        inputFields.style.display = "block";
+      } else {
+        inputFields.style.display = "none";
+      }
+      fetchAndDisplayPapers();
+    });
+
+    function fetchAndDisplayPapers() {
+      fetch("/fetch-papers-from-zotero")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(
+              "Failed to fetch papers from Zotero. Status code: " +
+                response.status
+            );
+          }
+          return response.json();
+        })
+        .then((data) => {
+          const tableBody = document.querySelector(
+            "#imported-papers-table tbody"
+          );
+          const tableHeader = document.querySelector(
+            "#imported-papers-table thead"
+          );
+
+          tableBody.innerHTML = ""; // Clear existing content
+
+          if (data.length > 0) {
+            tableHeader.style.display = "table-row-group";
+          }
+
+          data.forEach((item) => {
+            // Check if essential information exists (title, authors, and abstract)
+            if (
+              item.data.title &&
+              item.data.creators &&
+              item.data.creators.length > 0 &&
+              item.data.abstractNote
+            ) {
+              // Create a new table row for each paper
+              const row = tableBody.insertRow();
+
+              // Add cells for title, author(s), and abstract
+              const titleCell = row.insertCell(0);
+              const authorsCell = row.insertCell(1);
+              const abstractCell = row.insertCell(2);
+
+              const checkboxCell = row.insertCell(0);
+              const checkbox = document.createElement("input");
+              checkbox.type = "checkbox";
+              checkbox.setAttribute("data-paper-id", item.id);
+              checkboxCell.appendChild(checkbox);
+
+              // Access nested properties within the 'data' object
+              titleCell.textContent = item.data.title;
+              // Authors is an array, so join them with a comma separator
+              authorsCell.textContent = item.data.creators
+                .map((creator) => creator.name)
+                .join(", ");
+              abstractCell.textContent = item.data.abstractNote;
+            }
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching papers from Zotero:", error);
+          const tableBody = document.querySelector(
+            "#imported-papers-table tbody"
+          );
+          tableBody.innerHTML =
+            "<tr><td colspan='3'>An error occurred while fetching papers.</td></tr>";
+        });
+    }
+
+    updateButton.addEventListener("click", function () {
+      // Get all selected checkboxes
+      const selectedCheckboxes = document.querySelectorAll(
+        '#imported-papers-table input[type="checkbox"]:checked'
+      );
+
+      // Ensure only one paper is selected for update
+      if (selectedCheckboxes.length !== 1) {
+        console.error("Please select exactly one paper to update.");
+        return;
+      }
+
+      // Get the selected paper's data
+      const selectedPaperRow = selectedCheckboxes[0].closest("tr");
+      const title = selectedPaperRow.cells[1].textContent; // Assuming the title is in the second cell
+      const authors = selectedPaperRow.cells[2].textContent; // Assuming authors are in the third cell
+      const abstract = selectedPaperRow.cells[3].textContent; // Assuming abstract is in the fourth cell
+
+      // Fill the input fields with the selected paper's data
+      document.getElementById("paper-title").value = title;
+      document.getElementById("paper-authors").value = authors;
+      document.getElementById("paper-abstract").value = abstract;
+
+      // Store the ID of the paper to update
+      const paperIdToUpdate =
+        selectedCheckboxes[0].getAttribute("data-paper-id");
+      document
+        .getElementById("update-paper-button")
+        .setAttribute("data-paper-id", paperIdToUpdate);
+    });
+
+    createButton.addEventListener("click", function () {
+      const title = document.getElementById("paper-title").value;
+      const authors = document.getElementById("paper-authors").value;
+      const abstract = document.getElementById("paper-abstract").value;
+
+      if (!title || !authors || !abstract) {
+        console.error("Please fill in all fields.");
+        return;
+      }
+
+      const paperData = { title, authors, abstract };
+      const paperIdToUpdate = updateButton.getAttribute("data-paper-id");
+      const isUpdate = paperIdToUpdate !== null;
+
+      const endpoint = isUpdate
+        ? `/update-paper-in-zotero/${paperIdToUpdate}`
+        : "/create-paper-in-zotero";
+      const method = isUpdate ? "PUT" : "POST";
+
+      fetch(endpoint, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(paperData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(
+            isUpdate ? "Paper updated:" : "Paper created:",
+            data.message
+          );
+
+          const table = document.querySelector("#imported-papers-table tbody");
+
+          // Remove the old row if updating
+          if (isUpdate) {
+            const selectedCheckbox = document.querySelector(
+              `input[data-paper-id="${paperIdToUpdate}"]`
+            );
+            if (selectedCheckbox) {
+              const rowToUpdate = selectedCheckbox.closest("tr");
+              if (rowToUpdate) {
+                rowToUpdate.remove();
+              }
+            }
+          }
+
+          // Add the new or updated paper to the table
+          const row = table.insertRow();
+          const selectCell = row.insertCell(0);
+          const titleCell = row.insertCell(1);
+          const authorsCell = row.insertCell(2);
+          const abstractCell = row.insertCell(3);
+
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.setAttribute(
+            "data-paper-id",
+            isUpdate ? paperIdToUpdate : data.id
+          );
+          selectCell.appendChild(checkbox);
+
+          titleCell.textContent = title;
+          authorsCell.textContent = authors;
+          abstractCell.textContent = abstract;
+
+          // Clear input fields and remove update ID attribute
+          document.getElementById("paper-title").value = "";
+          document.getElementById("paper-authors").value = "";
+          document.getElementById("paper-abstract").value = "";
+          updateButton.removeAttribute("data-paper-id");
+        })
+        .catch((error) => {
+          console.error(
+            isUpdate ? "Error updating paper:" : "Error creating paper:",
+            error
+          );
+        });
+    });
+
+    deleteButton.addEventListener("click", function () {
+      const checkboxes = document.querySelectorAll(
+        '#imported-papers-table input[type="checkbox"]:checked'
+      );
+      checkboxes.forEach(function (checkbox) {
+        const paperIdToDelete = checkbox.getAttribute("data-paper-id");
+
+        fetch(`/delete-paper-in-zotero/${paperIdToDelete}`, {
+          method: "DELETE",
+        })
+          .then((response) => {
+            if (response.ok) {
+              console.log("Paper deleted successfully");
+              // Remove the row from the table
+              checkbox.closest("tr").remove();
+
+              // Optionally, you can refresh the papers from server
+              // fetchAndDisplayPapers();
+            } else {
+              console.error(
+                "Error deleting paper. Status code:",
+                response.status
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Error deleting paper:", error);
+          });
+      });
+    });
+  });
+</script>
+
+{% endblock %}
